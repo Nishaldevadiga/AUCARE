@@ -1,0 +1,113 @@
+# =============================================================================
+# AUCARE - Local Development Docker Compose
+# =============================================================================
+# Start all services: docker-compose up -d
+# View logs: docker-compose logs -f
+# Stop services: docker-compose down
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Frontend (React + Vite)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: aucare-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1
+      - VITE_APP_NAME=AUCARE
+      - VITE_ENABLE_PWA=false
+    depends_on:
+      - backend
+    networks:
+      - aucare-network
+
+  # ---------------------------------------------------------------------------
+  # Backend (FastAPI)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: aucare-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/aucare
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - JWT_SECRET_KEY=dev-jwt-secret-change-in-production
+      - ALLOWED_ORIGINS=["http://localhost:3000","http://localhost:5173"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - aucare-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # Database (PostgreSQL)
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: aucare-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=aucare
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - aucare-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis (Optional - for caching/sessions)
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: aucare-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aucare-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  aucare-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

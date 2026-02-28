@@ -1,0 +1,62 @@
+{
+  "name": "@aucare/frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "capacitor:init": "cap init",
+    "capacitor:add:android": "cap add android",
+    "capacitor:add:ios": "cap add ios",
+    "capacitor:sync": "cap sync",
+    "capacitor:open:android": "cap open android",
+    "capacitor:open:ios": "cap open ios",
+    "mobile:build": "npm run build && npm run capacitor:sync"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "@tanstack/react-query": "^5.51.0",
+    "axios": "^1.7.3",
+    "zustand": "^4.5.4",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.1.0",
+    "@capacitor/cli": "^6.1.0",
+    "@capacitor/core": "^6.1.0",
+    "@capacitor/ios": "^6.1.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "postcss": "^8.4.40",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.20.1",
+    "vitest": "^2.0.5",
+    "workbox-window": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

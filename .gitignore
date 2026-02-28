@@ -1,0 +1,117 @@
+# =============================================================================
+# AUCARE SaaS Platform - Global Gitignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Environment & Secrets
+# -----------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+service-account*.json
+secrets/
+
+# -----------------------------------------------------------------------------
+# Dependencies
+# -----------------------------------------------------------------------------
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+*.whl
+pip-wheel-metadata/
+.venv/
+venv/
+ENV/
+
+# -----------------------------------------------------------------------------
+# IDE & Editors
+# -----------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# -----------------------------------------------------------------------------
+# OS Files
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Build Outputs
+# -----------------------------------------------------------------------------
+/frontend/dist/
+/frontend/build/
+/backend/dist/
+*.log
+logs/
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -----------------------------------------------------------------------------
+# Terraform
+# -----------------------------------------------------------------------------
+/infrastructure/**/.terraform/
+/infrastructure/**/*.tfstate
+/infrastructure/**/*.tfstate.*
+/infrastructure/**/*.tfvars
+!infrastructure/**/*.tfvars.example
+/infrastructure/**/.terraform.lock.hcl
+/infrastructure/**/crash.log
+/infrastructure/**/override.tf
+/infrastructure/**/override.tf.json
+/infrastructure/**/*_override.tf
+/infrastructure/**/*_override.tf.json
+
+# -----------------------------------------------------------------------------
+# Docker
+# -----------------------------------------------------------------------------
+docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# Mobile (Capacitor)
+# -----------------------------------------------------------------------------
+/frontend/android/
+/frontend/ios/
+/frontend/.capacitor/
+
+# -----------------------------------------------------------------------------
+# Test & Coverage
+# -----------------------------------------------------------------------------
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
+
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
+*.bak
+*.tmp
+*.temp
+.cache/

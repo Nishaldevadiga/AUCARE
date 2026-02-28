@@ -1,0 +1,187 @@
+# =============================================================================
+# AUCARE - Continuous Deployment Pipeline
+# =============================================================================
+# Runs on: push to main (after CI passes)
+# Deploys to GCP Cloud Run
+# =============================================================================
+
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - staging
+          - production
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: us-central1
+  ARTIFACT_REGISTRY: aucare-registry
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Build and Push Images
+  # ---------------------------------------------------------------------------
+  build-frontend:
+    name: Build Frontend Image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+
+      - name: Build and push image
+        id: build
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/frontend:${{ github.sha }}"
+          docker build \
+            --build-arg VITE_API_BASE_URL=${{ secrets.API_BASE_URL }} \
+            --build-arg VITE_APP_NAME=AUCARE \
+            -t $IMAGE \
+            -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/frontend:latest \
+            -f frontend/Dockerfile \
+            frontend
+          docker push $IMAGE
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/frontend:latest
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+  build-backend:
+    name: Build Backend Image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+
+      - name: Build and push image
+        id: build
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/backend:${{ github.sha }}"
+          docker build \
+            -t $IMAGE \
+            -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/backend:latest \
+            -f backend/Dockerfile \
+            backend
+          docker push $IMAGE
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/backend:latest
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+  # ---------------------------------------------------------------------------
+  # Deploy to Cloud Run
+  # ---------------------------------------------------------------------------
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    needs: build-backend
+    environment: production
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: aucare-backend
+          region: ${{ env.GCP_REGION }}
+          image: ${{ needs.build-backend.outputs.image }}
+          flags: |
+            --min-instances=0
+            --max-instances=2
+            --memory=512Mi
+            --cpu=1
+            --port=8000
+            --allow-unauthenticated
+            --set-secrets=DATABASE_URL=aucare-database-url:latest,JWT_SECRET_KEY=aucare-jwt-secret:latest,SECRET_KEY=aucare-secret-key:latest
+
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: [build-frontend, deploy-backend]
+    environment: production
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: aucare-frontend
+          region: ${{ env.GCP_REGION }}
+          image: ${{ needs.build-frontend.outputs.image }}
+          flags: |
+            --min-instances=0
+            --max-instances=2
+            --memory=256Mi
+            --cpu=1
+            --port=8080
+            --allow-unauthenticated
+
+  # ---------------------------------------------------------------------------
+  # Post-Deployment
+  # ---------------------------------------------------------------------------
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-backend]
+    steps:
+      - name: Test Backend Health
+        run: |
+          for i in {1..5}; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" https://aucare-backend-${{ secrets.GCP_PROJECT_HASH }}.run.app/api/v1/health)
+            if [ "$response" = "200" ]; then
+              echo "Backend health check passed"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Backend health check failed"
+          exit 1
+        continue-on-error: true
+
+      - name: Test Frontend
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://aucare-frontend-${{ secrets.GCP_PROJECT_HASH }}.run.app)
+          if [ "$response" = "200" ]; then
+            echo "Frontend check passed"
+          else
+            echo "Frontend check failed with status $response"
+          fi
+        continue-on-error: true

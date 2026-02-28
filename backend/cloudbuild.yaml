@@ -1,0 +1,76 @@
+# =============================================================================
+# AUCARE Backend - Cloud Build Configuration
+# =============================================================================
+# Builds and deploys backend to Cloud Run
+# =============================================================================
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:latest'
+      - '-f'
+      - 'backend/Dockerfile'
+      - 'backend'
+    id: 'build-backend'
+
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend'
+    id: 'push-backend'
+    waitFor:
+      - 'build-backend'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'aucare-backend'
+      - '--image'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '2'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--port'
+      - '8000'
+      - '--concurrency'
+      - '80'
+      - '--set-env-vars'
+      - 'ENVIRONMENT=production,DEBUG=false'
+      - '--set-secrets'
+      - 'DATABASE_URL=aucare-database-url:latest,JWT_SECRET_KEY=aucare-jwt-secret:latest,SECRET_KEY=aucare-secret-key:latest'
+      - '--add-cloudsql-instances'
+      - '${_CLOUD_SQL_CONNECTION}'
+    id: 'deploy-backend'
+    waitFor:
+      - 'push-backend'
+
+substitutions:
+  _REGION: 'us-central1'
+  _ARTIFACT_REGISTRY: 'aucare-registry'
+  _CLOUD_SQL_CONNECTION: 'project:region:instance'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+timeout: '1200s'

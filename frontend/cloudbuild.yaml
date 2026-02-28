@@ -1,0 +1,75 @@
+# =============================================================================
+# AUCARE Frontend - Cloud Build Configuration
+# =============================================================================
+# Builds and deploys frontend to Cloud Run
+# =============================================================================
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_BASE_URL=${_API_BASE_URL}'
+      - '--build-arg'
+      - 'VITE_APP_NAME=${_APP_NAME}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:latest'
+      - '-f'
+      - 'frontend/Dockerfile'
+      - 'frontend'
+    id: 'build-frontend'
+
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend'
+    id: 'push-frontend'
+    waitFor:
+      - 'build-frontend'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'aucare-frontend'
+      - '--image'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:${SHORT_SHA}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '2'
+      - '--memory'
+      - '256Mi'
+      - '--cpu'
+      - '1'
+      - '--port'
+      - '8080'
+      - '--concurrency'
+      - '80'
+    id: 'deploy-frontend'
+    waitFor:
+      - 'push-frontend'
+
+substitutions:
+  _REGION: 'us-central1'
+  _ARTIFACT_REGISTRY: 'aucare-registry'
+  _API_BASE_URL: 'https://aucare-backend-xxxxx.run.app/api/v1'
+  _APP_NAME: 'AUCARE'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+timeout: '1200s'

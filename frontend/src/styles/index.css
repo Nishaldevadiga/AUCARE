@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   AUCARE - Base Styles
+   ============================================================================= */
+
+@layer base {
+  :root {
+    --color-primary: 59 130 246;
+    --color-secondary: 100 116 139;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-error: 239 68 68;
+  }
+
+  html {
+    @apply antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-white text-secondary-900;
+    @apply min-h-screen;
+    @apply text-base;
+  }
+
+  /* Mobile-first typography */
+  h1 {
+    @apply text-2xl font-bold md:text-3xl lg:text-4xl;
+  }
+
+  h2 {
+    @apply text-xl font-semibold md:text-2xl lg:text-3xl;
+  }
+
+  h3 {
+    @apply text-lg font-semibold md:text-xl;
+  }
+
+  h4 {
+    @apply text-base font-medium md:text-lg;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply h-2 w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-secondary-300;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-secondary-400;
+  }
+}
+
+/* =============================================================================
+   Component Layer
+   ============================================================================= */
+
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center;
+    @apply rounded-lg px-4 py-2;
+    @apply text-sm font-medium;
+    @apply transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn;
+    @apply bg-primary-600 text-white;
+    @apply hover:bg-primary-700;
+    @apply focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn;
+    @apply bg-secondary-100 text-secondary-700;
+    @apply hover:bg-secondary-200;
+    @apply focus:ring-secondary-500;
+  }
+
+  .btn-outline {
+    @apply btn;
+    @apply border border-secondary-300 bg-transparent text-secondary-700;
+    @apply hover:bg-secondary-50;
+    @apply focus:ring-secondary-500;
+  }
+
+  /* Input base styles */
+  .input {
+    @apply w-full rounded-lg border border-secondary-300;
+    @apply px-4 py-2;
+    @apply text-secondary-900 placeholder-secondary-400;
+    @apply transition-colors duration-200;
+    @apply focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+    @apply disabled:cursor-not-allowed disabled:bg-secondary-100;
+  }
+
+  /* Card base styles */
+  .card {
+    @apply rounded-xl bg-white;
+    @apply border border-secondary-200;
+    @apply p-4 md:p-6;
+    @apply shadow-sm;
+  }
+
+  /* Container */
+  .container-app {
+    @apply mx-auto w-full max-w-7xl;
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* =============================================================================
+   Utilities Layer
+   ============================================================================= */
+
+@layer utilities {
+  /* Safe area insets for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Animation utilities */
+  .animate-in {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  /* Mobile touch utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

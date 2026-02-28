@@ -1,0 +1,26 @@
+# =============================================================================
+# AUCARE Infrastructure - Terraform Variables Example
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your values
+# =============================================================================
+
+project_id      = "your-gcp-project-id"
+region          = "us-central1"
+billing_account = "XXXXXX-XXXXXX-XXXXXX"
+
+app_name               = "aucare"
+artifact_registry_name = "aucare-registry"
+sql_instance_name      = "aucare-db"
+database_name          = "aucare"
+database_user          = "aucare-user"
+vpc_connector_name     = "aucare-connector"
+
+budget_amount = 25
+alert_emails  = ["your-email@example.com"]
+
+# Secrets will be created empty - populate via GCP Console or gcloud
+secrets = {
+  "aucare-database-url" = ""
+  "aucare-jwt-secret"   = ""
+  "aucare-secret-key"   = ""
+}
