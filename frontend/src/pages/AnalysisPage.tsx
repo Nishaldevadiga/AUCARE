@@ -75,22 +75,15 @@ export default function AnalysisPage() {
     return `${getPredictionLabel(result.prediction)} ${confidenceText}`;
   }, [result]);
 
-  const hasRecommendation = useMemo(
-    () => Boolean(result?.recommendation?.trim()),
-    [result]
-  );
-
   return (
     <div className="analysis-background py-8 md:py-12">
       <div className="container-app">
         <div className="mx-auto max-w-6xl space-y-8">
 
-          {!result && !isAnalyzing && (
-            <section className="grid gap-5 lg:grid-cols-2">
-              <AudioRecorder onUpload={handleUpload} disabled={isAnalyzing} />
-              <AudioUploader onUpload={handleUpload} disabled={isAnalyzing} />
-            </section>
-          )}
+          <section className="grid gap-5 lg:grid-cols-2">
+            <AudioRecorder onUpload={handleUpload} disabled={isAnalyzing} />
+            <AudioUploader onUpload={handleUpload} disabled={isAnalyzing} />
+          </section>
 
           {isAnalyzing && (
             <div className="analysis-panel flex flex-col items-center justify-center py-16">
