@@ -8,8 +8,15 @@ recommendations for Myasthenia Gravis patients based on fatigue indicators.
 
 import os
 import logging
+from pathlib import Path
 from typing import Optional
+
+from dotenv import load_dotenv
 from groq import Groq
+
+# Load .env file from backend directory
+env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+load_dotenv(env_path)
 
 logger = logging.getLogger(__name__)
 
