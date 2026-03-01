@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Cloud Run Variables
+# MGCARE Infrastructure - Cloud Run Variables
 # =============================================================================
 
 variable "project_id" {

@@ -20,12 +20,13 @@ function getPredictionLabel(prediction: number | string | null): string {
     prediction === 1 ||
     String(prediction).toLowerCase() === 'mg' ||
     String(prediction).toLowerCase() === 'pathological' ||
+    String(prediction).toLowerCase() === 'fatigue' ||
     String(prediction).toLowerCase() === 'positive'
   ) {
-    return 'Potentially pathological voice pattern detected';
+    return 'Signs of vocal fatigue detected';
   }
 
-  return 'Voice pattern appears within healthy range';
+  return 'No signs of vocal fatigue detected';
 }
 
 export default function AnalysisPage() {

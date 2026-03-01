@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Cloud SQL Outputs
+# MGCARE Infrastructure - Cloud SQL Outputs
 # =============================================================================
 
 output "connection_name" {

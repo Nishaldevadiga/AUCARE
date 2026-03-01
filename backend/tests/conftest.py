@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Test Configuration and Fixtures
+# MGCARE Backend - Test Configuration and Fixtures
 # =============================================================================
 
 import asyncio

@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# AUCARE - GCP Cost Monitoring Script
+# MGCARE - GCP Cost Monitoring Script
 # =============================================================================
 # Usage: ./scripts/check-gcp-costs.sh
 # =============================================================================
@@ -16,7 +16,7 @@ NC='\033[0m'
 PROJECT_ID=$(gcloud config get-value project)
 
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}  AUCARE GCP Cost Report${NC}"
+echo -e "${CYAN}  MGCARE GCP Cost Report${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 echo -e "Project: ${GREEN}$PROJECT_ID${NC}"

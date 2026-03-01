@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Groq LLM Recommendation Service
+# MGCARE Backend - Groq LLM Recommendation Service
 # =============================================================================
 """
 Uses Groq LLM to analyze voice analysis results and provide personalized

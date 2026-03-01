@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE - Development Makefile
+# MGCARE - Development Makefile
 # =============================================================================
 # Usage: make <target>
 # =============================================================================
@@ -23,7 +23,7 @@ RESET := \033[0m
 
 help: ## Show this help message
 	@echo ""
-	@echo "$(CYAN)AUCARE Development Commands$(RESET)"
+	@echo "$(CYAN)MGCARE Development Commands$(RESET)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}'
@@ -176,7 +176,7 @@ terraform-destroy: ## Destroy Terraform infrastructure
 # =============================================================================
 
 mobile-init: ## Initialize Capacitor for mobile
-	cd frontend && npx cap init AUCARE com.aucare.app --web-dir=dist
+	cd frontend && npx cap init MGCARE com.aucare.app --web-dir=dist
 
 mobile-add-android: ## Add Android platform
 	cd frontend && npx cap add android

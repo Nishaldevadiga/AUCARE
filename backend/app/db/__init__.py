@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Database Module
+# MGCARE Backend - Database Module
 # =============================================================================
 
 from app.db.session import get_db, engine, AsyncSessionLocal

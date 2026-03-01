@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Database Session Management
+# MGCARE Backend - Database Session Management
 # =============================================================================
 
 from typing import AsyncGenerator

@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - VPC Connector Variables
+# MGCARE Infrastructure - VPC Connector Variables
 # =============================================================================
 
 variable "project_id" {

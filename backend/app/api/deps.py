@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - API Dependencies
+# MGCARE Backend - API Dependencies
 # =============================================================================
 
 from typing import Annotated

@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Frontend - Production Dockerfile
+# MGCARE Frontend - Production Dockerfile
 # =============================================================================
 # Multi-stage build optimized for Cloud Run
 # =============================================================================
@@ -23,7 +23,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ARG VITE_API_BASE_URL
-ARG VITE_APP_NAME=AUCARE
+ARG VITE_APP_NAME=MGCARE
 ARG VITE_ENABLE_PWA=true
 
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL

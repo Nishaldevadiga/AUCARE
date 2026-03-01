@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Artifact Registry Outputs
+# MGCARE Infrastructure - Artifact Registry Outputs
 # =============================================================================
 
 output "url" {

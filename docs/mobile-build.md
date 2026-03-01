@@ -1,6 +1,6 @@
 # Mobile Build Guide (Capacitor)
 
-This guide covers building AUCARE for Android and iOS using Capacitor.
+This guide covers building MGCARE for Android and iOS using Capacitor.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ npm run build
 Capacitor is already configured in `capacitor.config.ts`. If starting fresh:
 
 ```bash
-npx cap init AUCARE com.aucare.app --web-dir=dist
+npx cap init MGCARE com.aucare.app --web-dir=dist
 ```
 
 ### 3. Add Platforms
@@ -177,7 +177,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.aucare.app',
-  appName: 'AUCARE',
+  appName: 'MGCARE',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

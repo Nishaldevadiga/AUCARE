@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Cloud SQL Variables
+# MGCARE Infrastructure - Cloud SQL Variables
 # =============================================================================
 
 variable "project_id" {

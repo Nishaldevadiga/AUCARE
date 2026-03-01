@@ -1,6 +1,6 @@
-# AUCARE Backend
+# MGCARE Backend
 
-FastAPI backend for the AUCARE SaaS platform.
+FastAPI backend for the MGCARE SaaS platform.
 
 ## Quick Start
 

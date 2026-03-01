@@ -1,6 +1,6 @@
 # Local Development Guide
 
-This guide covers setting up and running AUCARE locally for development.
+This guide covers setting up and running MGCARE locally for development.
 
 ## Prerequisites
 

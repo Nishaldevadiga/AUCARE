@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Security Utilities
+# MGCARE Backend - Security Utilities
 # =============================================================================
 
 from datetime import datetime, timedelta, timezone

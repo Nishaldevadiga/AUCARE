@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Audio Feature Extraction & Analysis Service
+# MGCARE Backend - Audio Feature Extraction & Analysis Service
 # =============================================================================
 """
 Extracts acoustic features from audio recordings for MG (Myasthenia Gravis) detection.

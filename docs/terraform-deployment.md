@@ -1,6 +1,6 @@
 # Terraform Deployment Guide
 
-This guide covers deploying AUCARE infrastructure using Terraform.
+This guide covers deploying MGCARE infrastructure using Terraform.
 
 ## Prerequisites
 

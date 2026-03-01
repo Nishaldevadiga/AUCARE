@@ -14,7 +14,7 @@ export function Header() {
       <div className="container-app">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="text-xl font-bold text-primary-600">
-            AUCARE
+            MGCARE
           </Link>
           <nav className="flex items-center gap-6">
             {navLinks.map((link) => (

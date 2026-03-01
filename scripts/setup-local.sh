@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# AUCARE - Local Development Setup Script
+# MGCARE - Local Development Setup Script
 # =============================================================================
 # Usage: ./scripts/setup-local.sh
 # =============================================================================
@@ -14,7 +14,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}  AUCARE Local Development Setup${NC}"
+echo -e "${CYAN}  MGCARE Local Development Setup${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 

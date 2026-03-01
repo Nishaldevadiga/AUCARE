@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Budget Variables
+# MGCARE Infrastructure - Budget Variables
 # =============================================================================
 
 variable "project_id" {

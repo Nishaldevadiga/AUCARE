@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Audio Analysis Endpoints
+# MGCARE Backend - Audio Analysis Endpoints
 # =============================================================================
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, status

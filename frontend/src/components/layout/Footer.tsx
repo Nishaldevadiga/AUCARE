@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container-app py-6">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <p className="text-sm text-secondary-500">
-            &copy; {currentYear} AUCARE. All rights reserved.
+            &copy; {currentYear} MGCARE. All rights reserved.
           </p>
           <nav className="flex gap-6">
             {/* Footer links will be added here */}

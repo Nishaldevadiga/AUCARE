@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Application Configuration
+# MGCARE Backend - Application Configuration
 # =============================================================================
 
 from functools import lru_cache
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     )
 
     # Application
-    APP_NAME: str = "AUCARE"
+    APP_NAME: str = "MGCARE"
     ENVIRONMENT: Literal["development", "staging", "production"] = "development"
     DEBUG: bool = True
     LOG_LEVEL: str = "INFO"

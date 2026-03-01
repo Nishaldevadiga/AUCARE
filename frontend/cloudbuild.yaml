@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Frontend - Cloud Build Configuration
+# MGCARE Frontend - Cloud Build Configuration
 # =============================================================================
 # Builds and deploys frontend to Cloud Run
 # =============================================================================
@@ -66,7 +66,7 @@ substitutions:
   _REGION: 'us-central1'
   _ARTIFACT_REGISTRY: 'aucare-registry'
   _API_BASE_URL: 'https://aucare-backend-xxxxx.run.app/api/v1'
-  _APP_NAME: 'AUCARE'
+  _APP_NAME: 'MGCARE'
 
 options:
   logging: CLOUD_LOGGING_ONLY

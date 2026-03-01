@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - SQLAlchemy Base Model
+# MGCARE Backend - SQLAlchemy Base Model
 # =============================================================================
 
 from datetime import datetime, timezone

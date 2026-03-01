@@ -137,9 +137,10 @@ function RecommendationContent({ text }: { text: string }) {
 export function AnalysisResult({ result, onReset }: AnalysisResultProps) {
   const { prediction, confidence, risk_level, features, key_indicators, recommendation } = result;
 
-  const isPathological = prediction === 1 || 
-    String(prediction).toLowerCase() === 'mg' || 
+  const isFatigued = prediction === 1 ||
+    String(prediction).toLowerCase() === 'mg' ||
     String(prediction).toLowerCase() === 'pathological' ||
+    String(prediction).toLowerCase() === 'fatigue' ||
     String(prediction).toLowerCase() === 'positive';
 
   const getRiskColor = (level: string | null) => {
@@ -209,8 +210,8 @@ export function AnalysisResult({ result, onReset }: AnalysisResultProps) {
               Analysis Complete
             </h2>
             <p className="mt-1 text-secondary-600">
-              {isPathological
-                ? 'Voice patterns suggest potential pathological indicators'
+              {isFatigued
+                ? 'Voice patterns suggest signs of vocal fatigue'
                 : 'Voice patterns appear within normal range'}
             </p>
           </div>
@@ -218,9 +219,9 @@ export function AnalysisResult({ result, onReset }: AnalysisResultProps) {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <div className="rounded-lg bg-white p-4 shadow-sm">
-            <p className="text-sm text-secondary-500">Prediction</p>
+            <p className="text-sm text-secondary-500">Status</p>
             <p className="mt-1 text-2xl font-bold text-secondary-900">
-              {isPathological ? 'Pathological' : 'Healthy'}
+              {isFatigued ? 'Fatigue Detected' : 'No Fatigue'}
             </p>
           </div>
           <div className="rounded-lg bg-white p-4 shadow-sm">

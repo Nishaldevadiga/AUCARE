@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Cloud SQL Module
+# MGCARE Infrastructure - Cloud SQL Module
 # =============================================================================
 # Cost-optimized PostgreSQL using db-f1-micro (free tier eligible)
 # =============================================================================

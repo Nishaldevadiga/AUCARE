@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Health Endpoint Tests
+# MGCARE Backend - Health Endpoint Tests
 # =============================================================================
 
 import pytest

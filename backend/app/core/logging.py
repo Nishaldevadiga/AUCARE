@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Structured Logging Configuration
+# MGCARE Backend - Structured Logging Configuration
 # =============================================================================
 
 import logging

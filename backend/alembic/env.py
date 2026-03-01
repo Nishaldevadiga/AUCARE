@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Alembic Migrations Environment
+# MGCARE Backend - Alembic Migrations Environment
 # =============================================================================
 
 import asyncio

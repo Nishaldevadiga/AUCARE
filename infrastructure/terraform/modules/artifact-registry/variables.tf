@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Artifact Registry Variables
+# MGCARE Infrastructure - Artifact Registry Variables
 # =============================================================================
 
 variable "project_id" {

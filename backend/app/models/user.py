@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - User Model (Scaffold)
+# MGCARE Backend - User Model (Scaffold)
 # =============================================================================
 
 from sqlalchemy import Boolean, String

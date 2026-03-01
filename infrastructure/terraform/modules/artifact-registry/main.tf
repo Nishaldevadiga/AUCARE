@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Artifact Registry Module
+# MGCARE Infrastructure - Artifact Registry Module
 # =============================================================================
 
 resource "google_artifact_registry_repository" "registry" {
@@ -8,7 +8,7 @@ resource "google_artifact_registry_repository" "registry" {
   project       = var.project_id
   location      = var.region
   repository_id = var.name
-  description   = "AUCARE Docker container registry"
+  description   = "MGCARE Docker container registry"
   format        = "DOCKER"
 
   cleanup_policies {

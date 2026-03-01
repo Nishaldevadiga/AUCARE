@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# AUCARE - GCP Project Setup Script
+# MGCARE - GCP Project Setup Script
 # =============================================================================
 # Usage: ./scripts/setup-gcp.sh <project-id>
 # =============================================================================
@@ -23,7 +23,7 @@ PROJECT_ID=$1
 REGION=${2:-us-central1}
 
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}  AUCARE GCP Project Setup${NC}"
+echo -e "${CYAN}  MGCARE GCP Project Setup${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 echo -e "Project ID: ${GREEN}$PROJECT_ID${NC}"
@@ -65,7 +65,7 @@ echo -e "${YELLOW}Creating Artifact Registry...${NC}"
 gcloud artifacts repositories create aucare-registry \
     --repository-format=docker \
     --location=$REGION \
-    --description="AUCARE Docker images" \
+    --description="MGCARE Docker images" \
     --quiet 2>/dev/null || echo "Registry already exists"
 echo -e "${GREEN}✓${NC} Artifact Registry ready"
 
@@ -91,7 +91,7 @@ SA_NAME="aucare-cicd"
 SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 gcloud iam service-accounts create $SA_NAME \
-    --display-name="AUCARE CI/CD Service Account" \
+    --display-name="MGCARE CI/CD Service Account" \
     --quiet 2>/dev/null || echo "Service account already exists"
 
 # Grant necessary roles

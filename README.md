@@ -1,10 +1,10 @@
-# AUCARE SaaS Platform
+# MGCARE SaaS Platform
 
 A production-grade, cost-optimized SaaS platform scaffold built for Google Cloud Platform's $300 free tier.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           AUCARE ARCHITECTURE                                │
+│                           MGCARE ARCHITECTURE                                │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐                   │

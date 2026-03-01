@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE - Continuous Deployment Pipeline
+# MGCARE - Continuous Deployment Pipeline
 # =============================================================================
 # Runs on: push to main (after CI passes)
 # Deploys to GCP Cloud Run
@@ -59,7 +59,7 @@ jobs:
           IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/frontend:${{ github.sha }}"
           docker build \
             --build-arg VITE_API_BASE_URL=${{ secrets.API_BASE_URL }} \
-            --build-arg VITE_APP_NAME=AUCARE \
+            --build-arg VITE_APP_NAME=MGCARE \
             -t $IMAGE \
             -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/frontend:latest \
             -f frontend/Dockerfile \

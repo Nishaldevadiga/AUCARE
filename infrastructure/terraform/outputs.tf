@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Terraform Outputs
+# MGCARE Infrastructure - Terraform Outputs
 # =============================================================================
 
 output "backend_url" {

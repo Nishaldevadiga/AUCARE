@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Terraform Variables
+# MGCARE Infrastructure - Terraform Variables
 # =============================================================================
 
 variable "project_id" {

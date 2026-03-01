@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Cloud Run Outputs
+# MGCARE Infrastructure - Cloud Run Outputs
 # =============================================================================
 
 output "url" {

@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - VPC Connector Outputs
+# MGCARE Infrastructure - VPC Connector Outputs
 # =============================================================================
 
 output "name" {

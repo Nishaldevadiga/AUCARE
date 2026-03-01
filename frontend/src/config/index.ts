@@ -8,7 +8,7 @@ interface AppConfig {
 function getConfig(): AppConfig {
   return {
     apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
-    appName: import.meta.env.VITE_APP_NAME || 'AUCARE',
+    appName: import.meta.env.VITE_APP_NAME || 'MGCARE',
     enablePwa: import.meta.env.VITE_ENABLE_PWA === 'true',
     environment: (import.meta.env.MODE as AppConfig['environment']) || 'development',
   };

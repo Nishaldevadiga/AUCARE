@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.aucare.app',
-  appName: 'AUCARE',
+  appId: 'com.mgcare.app',
+  appName: 'MGCARE',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
@@ -34,7 +34,7 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: 'automatic',
-    scheme: 'AUCARE',
+    scheme: 'MGCARE',
   },
 };
 

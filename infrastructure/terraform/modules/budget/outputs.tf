@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Budget Outputs
+# MGCARE Infrastructure - Budget Outputs
 # =============================================================================
 
 output "budget_name" {

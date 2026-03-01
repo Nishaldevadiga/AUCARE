@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls /Users/nishu/Documents/AUCARE/AUCARE/backend/Dockerfile*)",
-      "Bash(ls /Users/nishu/Documents/AUCARE/AUCARE/frontend/Dockerfile*)",
+      "Bash(ls /Users/nishu/Documents/MGCARE/MGCARE/backend/Dockerfile*)",
+      "Bash(ls /Users/nishu/Documents/MGCARE/MGCARE/frontend/Dockerfile*)",
       "Bash(pg_isready)",
       "Bash(brew services list)",
       "Bash(brew list)",

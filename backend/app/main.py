@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - FastAPI Application Entry Point
+# MGCARE Backend - FastAPI Application Entry Point
 # =============================================================================
 
 # Compatibility shim: some third-party packages still import abstract
@@ -31,11 +31,11 @@ logger = get_logger(__name__)
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan manager for startup and shutdown events."""
     configure_logging()
-    logger.info("Starting AUCARE API", environment=settings.ENVIRONMENT)
+    logger.info("Starting MGCARE API", environment=settings.ENVIRONMENT)
 
     yield
 
-    logger.info("Shutting down AUCARE API")
+    logger.info("Shutting down MGCARE API")
     await engine.dispose()
 
 
@@ -43,7 +43,7 @@ def create_application() -> FastAPI:
     """Application factory for creating the FastAPI instance."""
     app = FastAPI(
         title=settings.APP_NAME,
-        description="AUCARE SaaS Platform API",
+        description="MGCARE SaaS Platform API",
         version="0.1.0",
         docs_url="/api/docs" if settings.DEBUG else None,
         redoc_url="/api/redoc" if settings.DEBUG else None,

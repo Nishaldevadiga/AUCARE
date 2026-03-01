@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - Main Terraform Configuration
+# MGCARE Infrastructure - Main Terraform Configuration
 # =============================================================================
 # Cost-optimized GCP infrastructure for $300 free tier
 # =============================================================================

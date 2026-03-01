@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Database Models
+# MGCARE Backend - Database Models
 # =============================================================================
 # Import all models here to ensure they are registered with SQLAlchemy
 # =============================================================================

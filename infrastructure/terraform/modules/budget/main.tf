@@ -1,12 +1,12 @@
 # =============================================================================
-# AUCARE Infrastructure - Budget Alerts Module
+# MGCARE Infrastructure - Budget Alerts Module
 # =============================================================================
 # Cost protection for GCP free tier
 # =============================================================================
 
 resource "google_billing_budget" "budget" {
   billing_account = var.billing_account
-  display_name    = "AUCARE Monthly Budget"
+  display_name    = "MGCARE Monthly Budget"
 
   budget_filter {
     projects = ["projects/${var.project_id}"]

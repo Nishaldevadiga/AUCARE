@@ -1,5 +1,5 @@
 -- =============================================================================
--- AUCARE - Database Initialization Script
+-- MGCARE - Database Initialization Script
 -- =============================================================================
 -- This script runs when the PostgreSQL container starts for the first time
 -- =============================================================================

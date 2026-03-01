@@ -1,6 +1,6 @@
 # GCP Setup Guide
 
-This guide walks you through setting up Google Cloud Platform for the AUCARE SaaS platform.
+This guide walks you through setting up Google Cloud Platform for the MGCARE SaaS platform.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ This script will:
 
 ```bash
 # Create project
-gcloud projects create aucare-prod --name="AUCARE Production"
+gcloud projects create aucare-prod --name="MGCARE Production"
 
 # Set project
 gcloud config set project aucare-prod
@@ -58,7 +58,7 @@ gcloud services enable \
 gcloud artifacts repositories create aucare-registry \
     --repository-format=docker \
     --location=us-central1 \
-    --description="AUCARE Docker images"
+    --description="MGCARE Docker images"
 ```
 
 ### 4. Create Secrets
@@ -92,7 +92,7 @@ gsutil versioning set on gs://aucare-prod-terraform-state
 ```bash
 # Create service account
 gcloud iam service-accounts create aucare-cicd \
-    --display-name="AUCARE CI/CD"
+    --display-name="MGCARE CI/CD"
 
 # Grant roles
 SA_EMAIL="aucare-cicd@aucare-prod.iam.gserviceaccount.com"

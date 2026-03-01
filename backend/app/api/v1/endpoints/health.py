@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Health Check Endpoints
+# MGCARE Backend - Health Check Endpoints
 # =============================================================================
 
 from datetime import datetime, timezone

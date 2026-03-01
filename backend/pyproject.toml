@@ -1,11 +1,11 @@
 [project]
 name = "aucare-backend"
 version = "0.1.0"
-description = "AUCARE SaaS Platform - Backend API"
+description = "MGCARE SaaS Platform - Backend API"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-authors = [{ name = "AUCARE Team" }]
+authors = [{ name = "MGCARE Team" }]
 
 dependencies = [
     "fastapi>=0.111.0",

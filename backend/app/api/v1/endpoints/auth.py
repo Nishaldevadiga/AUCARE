@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Authentication Endpoints (Scaffold)
+# MGCARE Backend - Authentication Endpoints (Scaffold)
 # =============================================================================
 # NOTE: This is a scaffold only. Implement actual authentication logic.
 # =============================================================================

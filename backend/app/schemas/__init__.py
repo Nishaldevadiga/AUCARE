@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Backend - Pydantic Schemas
+# MGCARE Backend - Pydantic Schemas
 # =============================================================================
 
 from app.schemas.base import BaseSchema, PaginatedResponse

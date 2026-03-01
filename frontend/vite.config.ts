@@ -13,9 +13,9 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         manifest: {
-          name: env.VITE_APP_NAME || 'AUCARE',
-          short_name: 'AUCARE',
-          description: 'AUCARE SaaS Platform',
+          name: env.VITE_APP_NAME || 'MGCARE',
+          short_name: 'MGCARE',
+          description: 'MGCARE SaaS Platform',
           theme_color: '#3B82F6',
           background_color: '#ffffff',
           display: 'standalone',

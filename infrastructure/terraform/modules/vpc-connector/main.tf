@@ -1,5 +1,5 @@
 # =============================================================================
-# AUCARE Infrastructure - VPC Connector Module
+# MGCARE Infrastructure - VPC Connector Module
 # =============================================================================
 # Serverless VPC Access connector for Cloud Run to Cloud SQL
 # =============================================================================

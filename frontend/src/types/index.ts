@@ -1,5 +1,5 @@
 // =============================================================================
-// AUCARE - Shared TypeScript Types
+// MGCARE - Shared TypeScript Types
 // =============================================================================
 
 export interface PaginatedResponse<T> {
