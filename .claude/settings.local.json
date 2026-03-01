@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/nishu/Documents/AUCARE/AUCARE/backend/Dockerfile*)",
+      "Bash(ls /Users/nishu/Documents/AUCARE/AUCARE/frontend/Dockerfile*)",
+      "Bash(pg_isready)",
+      "Bash(brew services list)",
+      "Bash(brew list)",
+      "Read(//Applications/**)",
+      "Bash(open -a Docker)",
+      "Bash(docker info)",
+      "Read(//Users/nishu/.docker/run/**)",
+      "Bash(curl --unix-socket /var/run/docker.sock http://localhost/version)",
+      "Bash(.venv/bin/python --version)",
+      "Bash(.venv/bin/pip show uvicorn)",
+      "Bash(node --version)",
+      "Bash(.venv/bin/pip show parselmouth librosa torch)",
+      "Bash(.venv/bin/pip install praat-parselmouth -q)",
+      "Bash(.venv/bin/python -c \"import parselmouth; print\\(''parselmouth ok''\\)\")",
+      "Bash(ENVIRONMENT=development DEBUG=true .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(npm run dev)",
+      "Bash(docker compose up db -d)",
+      "Bash(timeout 5 docker ps)"
+    ]
+  }
+}

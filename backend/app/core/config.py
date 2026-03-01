@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     DATABASE_MAX_OVERFLOW: int = 10
     DATABASE_ECHO: bool = False
 
+    # ML Models
+    LSTM_MODEL_PATH: str | None = None  # Absolute path; defaults to <project_root>/lstm_model.pt
+
     # GCP
     GCP_PROJECT_ID: str | None = None
     GCP_REGION: str = "us-central1"
