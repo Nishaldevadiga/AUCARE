@@ -11,32 +11,38 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    if (!disabled) {
-      setIsDragOver(true);
-    }
-  }, [disabled]);
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!disabled) {
+        setIsDragOver(true);
+      }
+    },
+    [disabled]
+  );
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    if (disabled) return;
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      if (isValidAudioFile(file)) {
-        setSelectedFile(file);
+      if (disabled) return;
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        if (isValidAudioFile(file)) {
+          setSelectedFile(file);
+        }
       }
-    }
-  }, [disabled]);
+    },
+    [disabled]
+  );
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -62,26 +68,45 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
   }, []);
 
   const isValidAudioFile = (file: File): boolean => {
-    const validTypes = ['audio/wav', 'audio/mpeg', 'audio/mp3', 'audio/ogg', 'audio/flac', 'audio/x-m4a', 'audio/mp4'];
-    const validExtensions = ['.wav', '.mp3', '.ogg', '.flac', '.m4a'];
-    const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const validTypes = [
+      'audio/wav',
+      'audio/mpeg',
+      'audio/mp3',
+      'audio/ogg',
+      'audio/flac',
+      'audio/x-m4a',
+      'audio/mp4',
+      'audio/webm',
+    ];
+    const validExtensions = ['.wav', '.mp3', '.ogg', '.flac', '.m4a', '.webm'];
+    const extension = `.${file.name.split('.').pop()?.toLowerCase()}`;
     return validTypes.includes(file.type) || validExtensions.includes(extension);
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   return (
-    <div className="card">
+    <div className="relative overflow-hidden rounded-2xl border border-secondary-200 bg-white p-5 shadow-sm md:p-6">
+      <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-primary-100/60 blur-2xl" />
+
+      <div className="relative mb-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-700">Option 2</p>
+        <h3 className="mt-2 text-xl text-secondary-900">Upload Audio File</h3>
+        <p className="mt-1 text-sm text-secondary-600">
+          Drag and drop or select an existing recording from your device.
+        </p>
+      </div>
+
       <div
         className={cn(
-          'relative rounded-lg border-2 border-dashed p-8 text-center transition-colors',
+          'relative rounded-xl border-2 border-dashed p-8 text-center transition-all duration-300',
           isDragOver && !disabled
-            ? 'border-primary-500 bg-primary-50'
-            : 'border-secondary-300 hover:border-secondary-400',
+            ? 'border-primary-500 bg-primary-50 shadow-[0_0_0_6px_rgba(37,99,235,0.08)]'
+            : 'border-secondary-300 hover:border-primary-400 hover:bg-secondary-50',
           disabled && 'cursor-not-allowed opacity-50'
         )}
         onDragOver={handleDragOver}
@@ -91,7 +116,7 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
         <input
           ref={inputRef}
           type="file"
-          accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a"
+          accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a,.webm"
           onChange={handleFileSelect}
           disabled={disabled}
           className="absolute inset-0 cursor-pointer opacity-0"
@@ -99,10 +124,7 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
 
         <div className="flex flex-col items-center">
           <svg
-            className={cn(
-              'mb-4 h-12 w-12',
-              isDragOver ? 'text-primary-500' : 'text-secondary-400'
-            )}
+            className={cn('mb-4 h-12 w-12', isDragOver ? 'text-primary-500' : 'text-secondary-400')}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -115,29 +137,20 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
             />
           </svg>
 
-          <p className="mb-2 text-lg font-medium text-secondary-700">
+          <p className="mb-2 text-lg font-semibold text-secondary-800">
             {isDragOver ? 'Drop your audio file here' : 'Upload Audio File'}
           </p>
-          <p className="mb-4 text-sm text-secondary-500">
-            Drag and drop or click to select
-          </p>
-          <p className="text-xs text-secondary-400">
-            Supported formats: WAV, MP3, OGG, FLAC, M4A (max 50MB)
-          </p>
+          <p className="mb-4 text-sm text-secondary-500">Drag and drop or click to select</p>
+          <p className="text-xs text-secondary-400">Supported formats: WAV, MP3, OGG, FLAC, M4A, WEBM</p>
         </div>
       </div>
 
       {selectedFile && (
-        <div className="mt-4 rounded-lg bg-secondary-50 p-4">
+        <div className="mt-4 rounded-xl border border-secondary-200 bg-secondary-50/70 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
-                <svg
-                  className="h-5 w-5 text-primary-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="h-5 w-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -148,9 +161,7 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
               </div>
               <div>
                 <p className="font-medium text-secondary-900">{selectedFile.name}</p>
-                <p className="text-sm text-secondary-500">
-                  {formatFileSize(selectedFile.size)}
-                </p>
+                <p className="text-sm text-secondary-500">{formatFileSize(selectedFile.size)}</p>
               </div>
             </div>
             <button
@@ -163,23 +174,19 @@ export function AudioUploader({ onUpload, disabled }: AudioUploaderProps) {
             </button>
           </div>
 
-          <button
-            onClick={handleUploadClick}
-            disabled={disabled}
-            className="btn-primary mt-4 w-full"
-          >
-            Analyze Audio
+          <button onClick={handleUploadClick} disabled={disabled} className="btn-primary mt-4 w-full">
+            Analyze Uploaded Audio
           </button>
         </div>
       )}
 
-      <div className="mt-6 rounded-lg bg-blue-50 p-4">
-        <h4 className="mb-2 font-medium text-blue-800">Recording Tips</h4>
-        <ul className="space-y-1 text-sm text-blue-700">
-          <li>• Record a sustained vowel /a/ for 5 seconds</li>
-          <li>• Use a quiet environment with minimal background noise</li>
-          <li>• Keep a consistent distance from the microphone</li>
-          <li>• Maintain a comfortable, natural pitch</li>
+      <div className="mt-6 rounded-xl border border-primary-100 bg-primary-50 p-4">
+        <h4 className="mb-2 font-medium text-primary-900">Recording Tips</h4>
+        <ul className="space-y-1 text-sm text-primary-800">
+          <li>Record a sustained vowel /a/ for around 5 seconds.</li>
+          <li>Use a quiet room with minimal background noise.</li>
+          <li>Keep a consistent distance from the microphone.</li>
+          <li>Maintain a comfortable, natural pitch.</li>
         </ul>
       </div>
     </div>

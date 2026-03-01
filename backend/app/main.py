@@ -2,6 +2,17 @@
 # AUCARE Backend - FastAPI Application Entry Point
 # =============================================================================
 
+# Compatibility shim: some third-party packages still import abstract
+# base classes from `collections` (deprecated/removed). Ensure those
+# names are available on the `collections` module by forwarding to
+# `collections.abc` before other imports happen.
+import collections as _collections
+import collections.abc as _collections_abc
+
+for _name in ("Mapping", "MutableMapping", "Iterable", "Sequence"):
+    if not hasattr(_collections, _name) and hasattr(_collections_abc, _name):
+        setattr(_collections, _name, getattr(_collections_abc, _name))
+
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 

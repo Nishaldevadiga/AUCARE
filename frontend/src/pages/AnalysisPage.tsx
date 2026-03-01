@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
-import { AudioUploader } from '@/components/analysis/AudioUploader';
-import { AnalysisResult } from '@/components/analysis/AnalysisResult';
+import { useState, useCallback, useMemo } from 'react';
+import { AudioRecorder, AudioUploader, AnalysisResult } from '@/components/analysis';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { apiClient, type ApiError } from '@/services/api';
 
@@ -11,7 +10,22 @@ interface AnalysisResponse {
   risk_level: string | null;
   features: Record<string, number> | null;
   key_indicators: Record<string, number> | null;
+  summary?: string | null;
+  ai_summary?: string | null;
   error?: string;
+}
+
+function getPredictionLabel(prediction: number | string | null): string {
+  if (
+    prediction === 1 ||
+    String(prediction).toLowerCase() === 'mg' ||
+    String(prediction).toLowerCase() === 'pathological' ||
+    String(prediction).toLowerCase() === 'positive'
+  ) {
+    return 'Potentially pathological voice pattern detected';
+  }
+
+  return 'Voice pattern appears within healthy range';
 }
 
 export default function AnalysisPage() {
@@ -46,63 +60,98 @@ export default function AnalysisPage() {
     setError(null);
   }, []);
 
+  const summaryText = useMemo(() => {
+    if (!result) {
+      return 'AI summary will appear here after analysis. It can include confidence, risk cues, and next clinical follow-up suggestions.';
+    }
+
+    const modelSummary = result.ai_summary?.trim() || result.summary?.trim();
+    if (modelSummary) {
+      return modelSummary;
+    }
+
+    const confidenceText =
+      result.confidence === null ? 'Confidence is not available.' : `Confidence is ${(result.confidence * 100).toFixed(1)}%.`;
+
+    return `${getPredictionLabel(result.prediction)} ${confidenceText}`;
+  }, [result]);
+
+  const hasModelSummary = useMemo(
+    () => Boolean(result?.ai_summary?.trim() || result?.summary?.trim()),
+    [result]
+  );
+
   return (
-    <div className="container-app py-8">
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-primary-600">Voice Analysis</h1>
-          <p className="text-secondary-600">
-            Upload an audio recording for acoustic feature extraction and analysis
-          </p>
-        </div>
-
-        {!result && !isAnalyzing && (
-          <AudioUploader onUpload={handleUpload} disabled={isAnalyzing} />
-        )}
-
-        {isAnalyzing && (
-          <div className="card flex flex-col items-center justify-center py-16">
-            <LoadingSpinner size="lg" />
-            <p className="mt-4 text-secondary-600">Analyzing audio...</p>
-            <p className="mt-2 text-sm text-secondary-400">
-              Extracting acoustic features and running prediction model
+    <div className="analysis-background py-8 md:py-12">
+      <div className="container-app">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <section className="analysis-hero">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-700">
+              Voice Intelligence Workspace
             </p>
-          </div>
-        )}
+            <h1 className="mt-3 text-3xl text-secondary-900 md:text-4xl">Voice Analysis</h1>
+            <p className="mt-3 max-w-3xl text-sm text-secondary-700 md:text-base">
+              Choose one of two paths to send audio for MG-oriented acoustic analysis: record live from your
+              microphone or upload an existing audio file.
+            </p>
+          </section>
 
-        {error && (
-          <div className="card border-error-500 bg-error-50">
-            <div className="flex items-start gap-3">
-              <svg
-                className="h-5 w-5 shrink-0 text-error-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div>
-                <h3 className="font-medium text-error-700">Analysis Failed</h3>
-                <p className="mt-1 text-sm text-error-600">{error}</p>
-                <button
-                  onClick={handleReset}
-                  className="mt-3 text-sm font-medium text-error-700 hover:text-error-800"
-                >
-                  Try again
-                </button>
+          {!result && !isAnalyzing && (
+            <section className="grid gap-5 lg:grid-cols-2">
+              <AudioRecorder onUpload={handleUpload} disabled={isAnalyzing} />
+              <AudioUploader onUpload={handleUpload} disabled={isAnalyzing} />
+            </section>
+          )}
+
+          {isAnalyzing && (
+            <div className="analysis-panel flex flex-col items-center justify-center py-16">
+              <LoadingSpinner size="lg" />
+              <p className="mt-4 text-secondary-700">Analyzing audio...</p>
+              <p className="mt-2 text-sm text-secondary-500">
+                Extracting acoustic features and running prediction model.
+              </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="analysis-panel border-error-300 bg-error-50">
+              <div className="flex items-start gap-3">
+                <svg className="h-5 w-5 shrink-0 text-error-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <h3 className="font-medium text-error-700">Analysis failed</h3>
+                  <p className="mt-1 text-sm text-error-600">{error}</p>
+                  <button
+                    onClick={handleReset}
+                    className="mt-3 text-sm font-medium text-error-700 transition-colors hover:text-error-800"
+                  >
+                    Try again
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {result && result.success && (
-          <AnalysisResult result={result} onReset={handleReset} />
-        )}
+          <section className="analysis-panel">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl text-secondary-900">AI Summary</h2>
+              <span className="rounded-full bg-secondary-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-secondary-600">
+                {hasModelSummary ? 'Model Output' : 'Placeholder'}
+              </span>
+            </div>
+            <div className="mt-4 min-h-28 rounded-xl border border-dashed border-secondary-300 bg-secondary-50 p-4">
+              <p className="leading-relaxed text-secondary-700">{summaryText}</p>
+            </div>
+          </section>
+
+          {result && result.success && <AnalysisResult result={result} onReset={handleReset} />}
+        </div>
       </div>
     </div>
   );
