@@ -10,8 +10,8 @@ interface AnalysisResponse {
   risk_level: string | null;
   features: Record<string, number> | null;
   key_indicators: Record<string, number> | null;
-  summary?: string | null;
-  ai_summary?: string | null;
+  probabilities?: { healthy: number | null; pathological: number | null } | null;
+  recommendation: string | null;
   error?: string;
 }
 
@@ -62,12 +62,11 @@ export default function AnalysisPage() {
 
   const summaryText = useMemo(() => {
     if (!result) {
-      return 'AI summary will appear here after analysis. It can include confidence, risk cues, and next clinical follow-up suggestions.';
+      return 'AI-powered recommendation will appear here after analysis. It includes personalized guidance based on your voice fatigue indicators.';
     }
 
-    const modelSummary = result.ai_summary?.trim() || result.summary?.trim();
-    if (modelSummary) {
-      return modelSummary;
+    if (result.recommendation) {
+      return result.recommendation;
     }
 
     const confidenceText =
@@ -76,8 +75,8 @@ export default function AnalysisPage() {
     return `${getPredictionLabel(result.prediction)} ${confidenceText}`;
   }, [result]);
 
-  const hasModelSummary = useMemo(
-    () => Boolean(result?.ai_summary?.trim() || result?.summary?.trim()),
+  const hasRecommendation = useMemo(
+    () => Boolean(result?.recommendation?.trim()),
     [result]
   );
 
@@ -128,17 +127,19 @@ export default function AnalysisPage() {
             </div>
           )}
 
-          <section className="analysis-panel">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-xl text-secondary-900">AI Summary</h2>
-              <span className="rounded-full bg-secondary-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-secondary-600">
-                {hasModelSummary ? 'Model Output' : 'Placeholder'}
-              </span>
-            </div>
-            <div className="mt-4 min-h-28 rounded-xl border border-dashed border-secondary-300 bg-secondary-50 p-4">
-              <p className="leading-relaxed text-secondary-700">{summaryText}</p>
-            </div>
-          </section>
+          {!result && (
+            <section className="analysis-panel">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-xl text-secondary-900">AI Recommendation</h2>
+                <span className="rounded-full bg-secondary-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-secondary-600">
+                  Awaiting Analysis
+                </span>
+              </div>
+              <div className="mt-4 min-h-28 rounded-xl border border-dashed border-secondary-300 bg-secondary-50 p-4">
+                <p className="leading-relaxed text-secondary-500">{summaryText}</p>
+              </div>
+            </section>
+          )}
 
           {result && result.success && <AnalysisResult result={result} onReset={handleReset} />}
         </div>

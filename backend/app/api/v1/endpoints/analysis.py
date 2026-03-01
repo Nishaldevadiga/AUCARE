@@ -17,6 +17,8 @@ class AnalysisResponse(BaseModel):
     risk_level: Optional[str] = None
     features: Optional[dict] = None
     key_indicators: Optional[dict] = None
+    probabilities: Optional[dict] = None
+    recommendation: Optional[str] = None
     error: Optional[str] = None
 
 
@@ -25,10 +27,11 @@ async def analyze_audio(
     file: UploadFile = File(..., description="Audio file (WAV format recommended)")
 ) -> AnalysisResponse:
     """
-    Analyze an audio file for voice biomarkers.
+    Analyze an audio file for voice biomarkers and get AI recommendations.
     
     Accepts audio files (preferably WAV format with sustained vowel /a/ recording).
-    Extracts acoustic features and runs MG (Myasthenia Gravis) detection model.
+    Extracts acoustic features, runs MG (Myasthenia Gravis) detection model,
+    and generates personalized recommendations using Groq LLM.
     
     Returns:
         - prediction: Model prediction (0 = healthy, 1 = pathological)
@@ -36,6 +39,7 @@ async def analyze_audio(
         - risk_level: Risk assessment (low/moderate/high)
         - features: All extracted acoustic features
         - key_indicators: Most important diagnostic features
+        - recommendation: AI-generated personalized recommendation
     """
     if not file.filename:
         raise HTTPException(
@@ -62,8 +66,13 @@ async def analyze_audio(
             )
 
         from app.services.audio_analysis import audio_analysis_service
+        from app.services.recommendation import recommendation_service
         
+        # Run audio analysis
         result = audio_analysis_service.analyze_audio(audio_bytes, file.filename)
+        
+        # Generate AI recommendation based on analysis
+        recommendation = recommendation_service.generate_recommendation(result)
         
         return AnalysisResponse(
             success=True,
@@ -72,6 +81,8 @@ async def analyze_audio(
             risk_level=result.get("risk_level"),
             features=result.get("features"),
             key_indicators=result.get("key_indicators"),
+            probabilities=result.get("probabilities"),
+            recommendation=recommendation,
         )
 
     except HTTPException:
