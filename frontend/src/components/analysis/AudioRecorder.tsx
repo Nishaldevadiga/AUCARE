@@ -27,12 +27,6 @@ function getSupportedMimeType(): string | null {
   return null;
 }
 
-function getExtensionForMimeType(mimeType: string): string {
-  if (mimeType.includes('ogg')) return 'ogg';
-  if (mimeType.includes('wav')) return 'wav';
-  return 'webm';
-}
-
 function formatDuration(totalSeconds: number): string {
   const mins = Math.floor(totalSeconds / 60)
     .toString()
@@ -41,8 +35,89 @@ function formatDuration(totalSeconds: number): string {
   return `${mins}:${secs}`;
 }
 
+function writeAscii(view: DataView, offset: number, value: string): void {
+  for (let i = 0; i < value.length; i += 1) {
+    view.setUint8(offset + i, value.charCodeAt(i));
+  }
+}
+
+function toMonoChannelData(audioBuffer: AudioBuffer): Float32Array {
+  if (audioBuffer.numberOfChannels === 1) {
+    return audioBuffer.getChannelData(0);
+  }
+
+  const sampleCount = audioBuffer.length;
+  const mixed = new Float32Array(sampleCount);
+  for (let channel = 0; channel < audioBuffer.numberOfChannels; channel += 1) {
+    const channelData = audioBuffer.getChannelData(channel);
+    for (let i = 0; i < sampleCount; i += 1) {
+      mixed[i] += channelData[i];
+    }
+  }
+
+  const scale = 1 / audioBuffer.numberOfChannels;
+  for (let i = 0; i < sampleCount; i += 1) {
+    mixed[i] *= scale;
+  }
+  return mixed;
+}
+
+function encodeWavFromAudioBuffer(audioBuffer: AudioBuffer): Blob {
+  const samples = toMonoChannelData(audioBuffer);
+  const sampleRate = audioBuffer.sampleRate;
+  const bitsPerSample = 16;
+  const numChannels = 1;
+  const bytesPerSample = bitsPerSample / 8;
+  const dataLength = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataLength);
+  const view = new DataView(buffer);
+
+  writeAscii(view, 0, 'RIFF');
+  view.setUint32(4, 36 + dataLength, true);
+  writeAscii(view, 8, 'WAVE');
+  writeAscii(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * bytesPerSample, true);
+  view.setUint16(32, numChannels * bytesPerSample, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeAscii(view, 36, 'data');
+  view.setUint32(40, dataLength, true);
+
+  let offset = 44;
+  for (let i = 0; i < samples.length; i += 1) {
+    const sample = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+    offset += 2;
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+async function convertRecordingBlobToWav(blob: Blob): Promise<Blob> {
+  const audioContextCtor =
+    window.AudioContext ||
+    (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+  if (!audioContextCtor) {
+    throw new Error('AudioContext not supported');
+  }
+
+  const audioContext = new audioContextCtor();
+  try {
+    const encoded = await blob.arrayBuffer();
+    const decoded = await audioContext.decodeAudioData(encoded.slice(0));
+    return encodeWavFromAudioBuffer(decoded);
+  } finally {
+    await audioContext.close();
+  }
+}
+
 export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [recordedFile, setRecordedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -90,7 +165,7 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
   }, [clearTimer, previewUrl, stopStream]);
 
   const startRecording = useCallback(async () => {
-    if (!isSupported || disabled || isRecording) {
+    if (!isSupported || disabled || isRecording || isProcessing) {
       return;
     }
 
@@ -114,21 +189,27 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
         }
       };
 
-      recorder.onstop = () => {
-        const outputMimeType = recorder.mimeType || mimeType || 'audio/webm';
-        const blob = new Blob(chunksRef.current, { type: outputMimeType });
-        const extension = getExtensionForMimeType(outputMimeType);
-        const file = new File([blob], `recording-${Date.now()}.${extension}`, {
-          type: outputMimeType,
-        });
-
-        const objectUrl = URL.createObjectURL(blob);
-        setPreviewUrl(objectUrl);
-        setRecordedFile(file);
-
+      recorder.onstop = async () => {
         setIsRecording(false);
         clearTimer();
         stopStream();
+        setIsProcessing(true);
+
+        try {
+          const outputMimeType = recorder.mimeType || mimeType || 'audio/webm';
+          const blob = new Blob(chunksRef.current, { type: outputMimeType });
+          const wavBlob = await convertRecordingBlobToWav(blob);
+          const file = new File([wavBlob], `recording-${Date.now()}.wav`, {
+            type: 'audio/wav',
+          });
+          const objectUrl = URL.createObjectURL(wavBlob);
+          setPreviewUrl(objectUrl);
+          setRecordedFile(file);
+        } catch {
+          setError('Unable to convert recording to WAV in this browser. Please upload a WAV file manually.');
+        } finally {
+          setIsProcessing(false);
+        }
       };
 
       recorderRef.current = recorder;
@@ -141,10 +222,20 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
     } catch {
       setError('Microphone access failed. Please allow microphone permission and try again.');
       setIsRecording(false);
+      setIsProcessing(false);
       clearTimer();
       stopStream();
     }
-  }, [clearPreviewUrl, clearTimer, disabled, isRecording, isSupported, mimeType, stopStream]);
+  }, [
+    clearPreviewUrl,
+    clearTimer,
+    disabled,
+    isProcessing,
+    isRecording,
+    isSupported,
+    mimeType,
+    stopStream,
+  ]);
 
   const stopRecording = useCallback(() => {
     const recorder = recorderRef.current;
@@ -175,7 +266,7 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-success-700">Option 1</p>
         <h3 className="mt-2 text-xl text-secondary-900">Record Audio</h3>
         <p className="mt-1 text-sm text-secondary-600">
-          Use your microphone to record and send audio directly for analysis.
+          Use your microphone to record and send a WAV file directly for analysis.
         </p>
       </div>
 
@@ -191,17 +282,30 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-secondary-700">Recording Status</p>
-                <p className={cn('text-xl font-semibold', isRecording ? 'text-error-600' : 'text-secondary-900')}>
-                  {isRecording ? `Recording ${formatDuration(recordingSeconds)}` : 'Ready to record'}
+                <p
+                  className={cn(
+                    'text-xl font-semibold',
+                    isRecording ? 'text-error-600' : isProcessing ? 'text-warning-700' : 'text-secondary-900'
+                  )}
+                >
+                  {isRecording
+                    ? `Recording ${formatDuration(recordingSeconds)}`
+                    : isProcessing
+                      ? 'Converting to WAV...'
+                      : 'Ready to record'}
                 </p>
               </div>
               <span
                 className={cn(
                   'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
-                  isRecording ? 'bg-error-100 text-error-700' : 'bg-secondary-200 text-secondary-700'
+                  isRecording
+                    ? 'bg-error-100 text-error-700'
+                    : isProcessing
+                      ? 'bg-warning-100 text-warning-700'
+                      : 'bg-secondary-200 text-secondary-700'
                 )}
               >
-                {isRecording ? 'LIVE' : 'IDLE'}
+                {isRecording ? 'LIVE' : isProcessing ? 'PROCESSING' : 'IDLE'}
               </span>
             </div>
           </div>
@@ -209,14 +313,14 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={startRecording}
-              disabled={disabled || isRecording}
+              disabled={disabled || isRecording || isProcessing}
               className="btn-primary"
             >
               Start Recording
             </button>
             <button
               onClick={stopRecording}
-              disabled={disabled || !isRecording}
+              disabled={disabled || !isRecording || isProcessing}
               className="btn-outline"
             >
               Stop Recording
@@ -231,15 +335,15 @@ export function AudioRecorder({ onUpload, disabled }: AudioRecorderProps) {
 
           {recordedFile && (
             <div className="rounded-xl border border-secondary-200 bg-secondary-50/70 p-4">
-              <p className="text-sm font-medium text-secondary-700">Recorded Clip</p>
+              <p className="text-sm font-medium text-secondary-700">Recorded Clip (WAV)</p>
               <p className="mt-1 text-sm text-secondary-500">{recordedFile.name}</p>
               {previewUrl && <audio className="mt-3 w-full" controls src={previewUrl} />}
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <button onClick={handleUploadRecording} disabled={disabled} className="btn-primary">
+                <button onClick={handleUploadRecording} disabled={disabled || isProcessing} className="btn-primary">
                   Send Recording
                 </button>
-                <button onClick={resetRecording} disabled={disabled} className="btn-secondary">
+                <button onClick={resetRecording} disabled={disabled || isProcessing} className="btn-secondary">
                   Discard
                 </button>
               </div>

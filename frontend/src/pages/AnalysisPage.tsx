@@ -85,16 +85,6 @@ export default function AnalysisPage() {
     <div className="analysis-background py-8 md:py-12">
       <div className="container-app">
         <div className="mx-auto max-w-6xl space-y-8">
-          <section className="analysis-hero">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-700">
-              Voice Intelligence Workspace
-            </p>
-            <h1 className="mt-3 text-3xl text-secondary-900 md:text-4xl">Voice Analysis</h1>
-            <p className="mt-3 max-w-3xl text-sm text-secondary-700 md:text-base">
-              Choose one of two paths to send audio for MG-oriented acoustic analysis: record live from your
-              microphone or upload an existing audio file.
-            </p>
-          </section>
 
           {!result && !isAnalyzing && (
             <section className="grid gap-5 lg:grid-cols-2">
